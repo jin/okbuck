@@ -84,6 +84,10 @@ To add a pre commit hook:
 - Make the script executable: `chmod +x .git/hooks/pre-commit`
 - Replace `<<PATH_TO_JAR>>` in `.git/hooks/pre-commit` with the location of google-java-format jar.
 
+## Experimental Bazel Support - OkBazel
+
+OkBuck offers experimental support for generating [Bazel](https://bazel.build) `BUILD` files. See the [OkBazel README.md](buildSrc/src/main/groovy/com/uber/okbuck/experimental/bazel/README.md) for more information.
+
 ## Contributors
 
 We'd love for you to contribute to our open source projects. Before we can accept your contributions, we kindly ask you to sign our [Uber Contributor License Agreement](https://docs.google.com/a/uber.com/forms/d/1pAwS_-dA1KhPlfxzYLBqK6rsSWwRwH95OCCZrcsY5rk/viewform).
