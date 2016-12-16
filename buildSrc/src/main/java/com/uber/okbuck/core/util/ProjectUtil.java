@@ -79,7 +79,11 @@ public final class ProjectUtil {
   }
 
   static OkBuckGradlePlugin getPlugin(Project project) {
-    return project.getRootProject().getPlugins().getPlugin(OkBuckGradlePlugin.class);
+    return project.getRootProject().getPlugins().stream()
+        .filter(p -> p instanceof OkBuckGradlePlugin)
+        .map(OkBuckGradlePlugin.class::cast)
+        .findFirst()
+        .get();
   }
 
   public static OkBuckExtension getOkBuckExtension(Project project) {
@@ -137,7 +141,6 @@ public final class ProjectUtil {
     try {
       ArtifactResolutionQuery query = dependencies.createArtifactResolutionQuery();
       query.forComponents(artifacts);
-
       @SuppressWarnings("unchecked")
       Class<? extends Artifact>[] artifactTypesArray =
           (Class<? extends Artifact>[]) new Class<?>[] {SourcesArtifact.class};

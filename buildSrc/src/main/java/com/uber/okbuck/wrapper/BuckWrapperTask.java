@@ -27,6 +27,10 @@ public class BuckWrapperTask extends DefaultTask {
 
   @Input public Set<String> ignoredDirs;
 
+  @Input public File wrapperFile;
+
+  @Input public String wrapperTemplate;
+
   private final File wrapper = getProject().file("buckw");
 
   @Inject
@@ -53,6 +57,9 @@ public class BuckWrapperTask extends DefaultTask {
       FileUtil.copyResourceToProject(
           "wrapper/WATCHMAN_CONFIG", getProject().file(".watchmanconfig"));
     }
+
+//    FileUtil.copyResourceToProject(wrapperTemplate, wrapperFile, templates);
+//    wrapperFile.setExecutable(true);
   }
 
   @Override
@@ -75,7 +82,6 @@ public class BuckWrapperTask extends DefaultTask {
             .stream()
             .map(ignoredDir -> "            [\"dirname\", \"" + ignoredDir + "\"]")
             .collect(Collectors.joining(",\n"));
-
     return "        [\"not\",\n" + ignoreExprs + "\n        ]";
   }
 
