@@ -1,38 +1,72 @@
-package com.uber.okbuck.core.util;
+package com.uber.okbuck.core.manager;
 
 import com.google.common.collect.ImmutableSet;
 import com.uber.okbuck.OkBuckGradlePlugin;
 import com.uber.okbuck.core.dependency.DependencyCache;
 import com.uber.okbuck.core.dependency.DependencyUtils;
+import com.uber.okbuck.core.util.FileUtil;
+import com.uber.okbuck.core.util.ProjectUtil;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.EnumSet;
+import java.util.Set;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 
-public final class RobolectricUtil {
+public final class RobolectricManager {
 
   private static final String ROBOLECTRIC_RUNTIME = "robolectricRuntime";
   public static final String ROBOLECTRIC_CACHE =
       OkBuckGradlePlugin.DEFAULT_CACHE_PATH + "/robolectric";
 
-  private RobolectricUtil() {}
+  private final Project rootProject;
 
-  public static void download(Project project) {
+  public RobolectricManager(Project rootProject) {
+    this.rootProject = rootProject;
+  }
+
+  public void download() {
     ImmutableSet.Builder<Configuration> runtimeDeps = ImmutableSet.builder();
 
     for (API api : EnumSet.allOf(API.class)) {
       Configuration runtimeApi =
-          project.getConfigurations().maybeCreate(ROBOLECTRIC_RUNTIME + "_" + api.name());
-      project.getDependencies().add(runtimeApi.getName(), api.getCoordinates());
+          rootProject.getConfigurations().maybeCreate(ROBOLECTRIC_RUNTIME + "_" + api.name());
+      rootProject.getDependencies().add(runtimeApi.getName(), api.getCoordinates());
       runtimeDeps.add(runtimeApi);
     }
 
     DependencyCache dependencyCache =
-        new DependencyCache(project, DependencyUtils.createCacheDir(project, ROBOLECTRIC_CACHE));
+        new DependencyCache(
+            rootProject,
+            DependencyUtils.createCacheDir(
+                rootProject, OkBuckGradlePlugin.EXTERNAL_DEPENDENCY_CACHE),
+            ProjectUtil.getDependencyManager(rootProject));
+
+    Path robolectricCache = rootProject.file(ROBOLECTRIC_CACHE).toPath();
+    FileUtil.deleteQuietly(robolectricCache);
+    robolectricCache.toFile().mkdirs();
+
     for (Configuration configuration : runtimeDeps.build()) {
-      dependencyCache.build(configuration, false);
+      Set<String> dependencies = dependencyCache.build(configuration, false);
+
+      dependencies.forEach(
+          dependency -> {
+            Path fromPath = rootProject.file(dependency + ".jar").toPath();
+            Path toPath =
+                robolectricCache.resolve(fromPath.getFileName().toString().replace("--", "-"));
+
+            try {
+              Files.createLink(toPath, fromPath.toRealPath());
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          });
     }
     dependencyCache.cleanup();
   }
+
+  public void finalizeDependencies() {}
 
   @SuppressWarnings("unused")
   enum API {
