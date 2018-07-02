@@ -1,7 +1,7 @@
 @args (String transformJar)
 prebuilt_jar(
-    name = @transformJar,
-    binary_jar = @transformJar,
+    name = '@transformJar',
+    binary_jar = '@transformJar',
     visibility = ['PUBLIC'],
 )
 

@@ -21,6 +21,7 @@ public final class RobolectricManager {
       OkBuckGradlePlugin.DEFAULT_CACHE_PATH + "/robolectric";
 
   private final Project rootProject;
+  private ImmutableSet<String> dependencies;
 
   public RobolectricManager(Project rootProject) {
     this.rootProject = rootProject;
@@ -43,30 +44,35 @@ public final class RobolectricManager {
                 rootProject, OkBuckGradlePlugin.EXTERNAL_DEPENDENCY_CACHE),
             ProjectUtil.getDependencyManager(rootProject));
 
+    dependencies =
+        runtimeDeps
+            .build()
+            .stream()
+            .map(configuration -> dependencyCache.build(configuration, false))
+            .flatMap(Set::stream)
+            .collect(com.uber.okbuck.core.util.MoreCollectors.toImmutableSet());
+
+    dependencyCache.cleanup();
+  }
+
+  public void finalizeDependencies() {
     Path robolectricCache = rootProject.file(ROBOLECTRIC_CACHE).toPath();
     FileUtil.deleteQuietly(robolectricCache);
     robolectricCache.toFile().mkdirs();
 
-    for (Configuration configuration : runtimeDeps.build()) {
-      Set<String> dependencies = dependencyCache.build(configuration, false);
+    dependencies.forEach(
+        dependency -> {
+          Path fromPath = rootProject.file(dependency + ".jar").toPath();
+          Path toPath =
+              robolectricCache.resolve(fromPath.getFileName().toString().replace("--", "-"));
 
-      dependencies.forEach(
-          dependency -> {
-            Path fromPath = rootProject.file(dependency + ".jar").toPath();
-            Path toPath =
-                robolectricCache.resolve(fromPath.getFileName().toString().replace("--", "-"));
-
-            try {
-              Files.createLink(toPath, fromPath.toRealPath());
-            } catch (IOException e) {
-              throw new RuntimeException(e);
-            }
-          });
-    }
-    dependencyCache.cleanup();
+          try {
+            Files.createLink(toPath, fromPath.toRealPath());
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
   }
-
-  public void finalizeDependencies() {}
 
   @SuppressWarnings("unused")
   enum API {

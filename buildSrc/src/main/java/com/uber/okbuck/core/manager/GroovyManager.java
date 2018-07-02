@@ -25,6 +25,7 @@ public final class GroovyManager {
       OkBuckGradlePlugin.DEFAULT_CACHE_PATH + "/groovy_installation";
 
   private final Project rootProject;
+  private Set<String> dependencies;
 
   public GroovyManager(Project rootProject) {
     this.rootProject = rootProject;
@@ -38,7 +39,7 @@ public final class GroovyManager {
     rootProject
         .getDependencies()
         .add(GROOVY_DEPS_CONFIG, "org.codehaus.groovy:groovy:" + groovyVersion);
-    Set<String> dependencies =
+    dependencies =
         new DependencyCache(
                 rootProject,
                 DependencyUtils.createCacheDir(
@@ -58,6 +59,10 @@ public final class GroovyManager {
     File startGroovy = new File(groovyHome, "bin/startGroovy");
     new StartGroovy().groovyVersion(groovyVersion).render(startGroovy);
     startGroovy.setExecutable(true);
+  }
+
+  public void finalDependencies() {
+    String groovyVersion = GroovySystem.getVersion();
 
     Path groovyLibCache = rootProject.file(GROOVY_HOME_LOCATION).toPath().resolve("lib");
     FileUtil.deleteQuietly(groovyLibCache);
@@ -78,6 +83,4 @@ public final class GroovyManager {
           }
         });
   }
-
-  public void finalDependencies() {}
 }
