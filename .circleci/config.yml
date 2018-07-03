@@ -60,7 +60,7 @@ jobs:
           shell: "/bin/bash"
       - run:
           name: Run unit tests
-          command: ./buckw test //... --include unit
+          command: ./buckw test //... --include unit --always_exclude
           shell: "/bin/bash"
       # - run:
       #     name: Wait for emulator
