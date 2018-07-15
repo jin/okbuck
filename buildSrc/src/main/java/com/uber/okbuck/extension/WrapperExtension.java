@@ -1,6 +1,8 @@
 package com.uber.okbuck.extension;
 
 import com.google.common.collect.Sets;
+
+import java.io.File;
 import java.util.Set;
 
 public class WrapperExtension {
@@ -24,4 +26,8 @@ public class WrapperExtension {
 
   /** List of directories to ignore when querying for changes that should trigger okbuck runs */
   public Set<String> ignoredDirs = Sets.newHashSet(".okbuck");
+
+  public File wrapperFile;
+
+  public String wrapperTemplate;
 }

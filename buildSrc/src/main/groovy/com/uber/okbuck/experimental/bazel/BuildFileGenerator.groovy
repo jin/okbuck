@@ -8,7 +8,7 @@ import com.uber.okbuck.core.model.java.JavaAppTarget
 import com.uber.okbuck.core.model.java.JavaLibTarget
 import com.uber.okbuck.core.util.ProjectUtil
 import com.uber.okbuck.extension.OkBuckExtension
-import com.uber.okbuck.rule.base.BuckRule
+import com.uber.okbuck.template.base.BuckRule
 import org.gradle.api.Project
 
 import static com.uber.okbuck.core.util.ProjectUtil.getTargets

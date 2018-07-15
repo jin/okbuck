@@ -104,7 +104,9 @@ public class OkBuckGradlePlugin implements Plugin<Project> {
                   wrapper.repo,
                   wrapper.watch,
                   wrapper.sourceRoots,
-                  wrapper.ignoredDirs);
+                  wrapper.ignoredDirs,
+                  wrapper.wrapperFile,
+                  wrapper.wrapperTemplate);
 
           Map<String, Configuration> extraConfigurations =
               okbuckExt
