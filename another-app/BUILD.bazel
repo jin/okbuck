@@ -1,0 +1,30 @@
+load("@gmaven_rules//:defs.bzl", "gmaven_artifact")
+
+android_binary(
+    name = "bin_release",
+    srcs = glob(["src/**/*.java"]),
+    custom_package = "com.uber.okbuck.example.anotherapp",
+    manifest = "AndroidManifest.xml",
+    manifest_values = {
+        "applicationId": "com.uber.okbuck.example.anotherapp",
+        "label": "custom permission",
+    },
+    proguard_specs = [
+        "proguard-android.txt",
+        "proguard-rules.pro",
+    ],
+    resource_files = glob(["res/**/*"]),
+    deps = [
+        ":hello-jni.so",
+        gmaven_artifact("com.android.support:appcompat-v7:aar:27.1.0"),
+        "//libraries/common:common_paidRelease",
+        "//libraries/emptylibrary:src_release",
+        "//libraries/javalibrary:src_main",
+        "//libraries/parcelable:src_release",
+    ],
+)
+
+cc_library(
+    name = "hello-jni.so",
+    srcs = ["jniLibs/armeabi/libhello-jni.so"],
+)

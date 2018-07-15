@@ -1,0 +1,7 @@
+android_library(
+    name = "src_release",
+    manifest = "src/main/AndroidManifest.xml",
+    srcs = glob(["src/main/java/**/*.java"]),
+    custom_package = "com.uber.okbuck.example.common",
+    visibility = ["//visibility:public"]
+)

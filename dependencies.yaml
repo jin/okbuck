@@ -1,0 +1,21 @@
+options:
+  buildHeader: [ ]
+  languages: [ "java" ]
+  resolverType: "coursier"
+  resolvers:
+    - id: "mavencentral"
+      type: "default"
+      url: https://repo.maven.apache.org/maven2/
+  transitivity: runtime_deps
+  versionConflictPolicy: highest
+
+dependencies:
+  com.google.dagger:
+    dagger:
+      version: "2.15"
+      lang: java
+
+  com.google.code.gson:
+    gson:
+      lang: java
+      version: "2.8.2"

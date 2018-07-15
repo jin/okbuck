@@ -1,0 +1,9 @@
+java_library(
+    name = 'src_main',
+    srcs = glob(['src/main/java/**/*.java']),
+    deps = [
+        "//3rdparty/jvm/com/google/dagger",
+        "//3rdparty/jvm/com/google/code/gson",
+    ],
+    visibility = ["//visibility:public"],
+)

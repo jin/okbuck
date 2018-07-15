@@ -1,0 +1,29 @@
+android_library(
+    name = "common_paidRelease",
+    srcs = glob(['src/main/java/**/*.java']),
+    manifest = 'src/main/AndroidManifest.xml',
+    resource_files = glob(["src/main/res/**/*", "src/paidRelease/res/**/*"]),
+    idl_import_root = "src/main/aidl",
+    idl_srcs = glob(["src/main/aidl/com/uber/okbuck/example/common/IMyAidlInterface.aidl"]),
+    idl_parcelables = ["src/main/aidl/com/uber/okbuck/example/common/Person.aidl"],
+    deps = [
+        '//libraries/parcelable:src_release',
+        ':src_paidRelease',
+    ],
+    custom_package = "com.example.okbuck.example.common",
+    visibility = ["//visibility:public"],
+    exports = [
+        ":src_paidRelease",
+    ]
+)
+
+android_library(
+    name = 'src_paidRelease',
+    srcs = glob([
+        'src/main/java/**/*.java',
+        'src/paidRelease/java/**/*.java',
+    ]),
+    custom_package = "com.uber.okbuck.example.common",
+    manifest = 'src/main/AndroidManifest.xml',
+    resource_files = glob(["src/paidRelease/res/**/*"]),
+)
